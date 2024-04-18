@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Résultat du Quiz</title>
+    <link rel="stylesheet" href="/src/static/css/style.css" />
+    <script src="/src/static/js/particles.js"></script>
+  </head>
+  <body>
+    <!-- Animation des particules -->
+    <div id="particles-js"></div>
+    <div class="container">
+      <div class="feedback">
+        <!-- Affichage du résultat du quiz et feedback -->
+        <p class="status {{if .Correct}}correct{{else}}incorrect{{end}}">
+          {{if .Correct}}Correct!{{else}}Incorrect!{{end}}
+        </p>
+        <p>Votre réponse était <strong>'{{.UserAnswer}}'</strong>.</p>
+        <!-- Affiche la bonne réponse si incorrect -->
+        {{if not .Correct}}
+        <p>La bonne réponse est <strong>'{{.CorrectAns}}'</strong>.</p>
+        {{end}}
+        <!-- Bouton pour la question suivante ou fin du quiz -->
+        <form
+          action="{{if .IsLastQuestion}}/finish{{else}}/quiz{{end}}"
+          method="get"
+        >
+          <button type="submit" class="submit-button">
+            {{if .IsLastQuestion}}Afficher les résultats{{else}}Prochaine
+            question{{end}}
+          </button>
+        </form>
+      </div>
+    </div>
+    <!-- Script pour changer les particules basé sur la réponse -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var scriptPath = {{.Correct}} ? '/src/static/js/correct-particles.js' : '/src/static/js/incorrect-particles.js';
+        var script = document.createElement('script');
+        script.src = scriptPath;
+        document.head.appendChild(script);
+      });
+    </script>
+  </body>
+</html>

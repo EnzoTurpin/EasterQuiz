@@ -1,0 +1,37 @@
+Rapport de Projet : Quiz en Ligne sur le Thème de Pâques
+
+
+
+Introduction:
+
+Ce rapport détaille le développement d'un quiz en ligne utilisant le langage Golang, consacré au thème de Pâques, en mettant l'accent sur la phase de recherche, la conception, le développement, les tests, les améliorations apportées, ainsi que sur les défis de design rencontrés. Le projet illustre l'utilisation efficace de Go pour le backend, ainsi que de HTML et CSS pour le frontend, visant à offrir une expérience utilisateur riche et interactive.
+
+
+Phase de Recherche et Formation:
+
+En amont du développement, une phase de recherche approfondie a été entreprise. J’ai exploré diverses sources d'informations sur les traditions de Pâques, ainsi que sur les meilleures pratiques de développement web. Des tutoriels avancés sur Go, HTML5, et CSS3 ont été consultés pour s'assurer que l'application soit à la fois performante et conforme aux standards actuels..
+
+
+Développement:
+
+Le backend, développé en Go, comprend main.go pour l'initialisation du serveur et la définition des routes, handlers.go pour la gestion des requêtes HTTP, et quiz.go pour la logique métier du quiz. Le frontend se compose de plusieurs fichiers HTML, notamment feedback.html, question_form.html, results.html, et difficulty_selection.html, stylisés par un fichier CSS unique, style.css, visant à créer une interface conviviale et esthétiquement agréable.
+
+
+Tests et Améliorations:
+
+Des tests utilisateurs ont été menés pour évaluer l'expérience globale, avec des scénarios couvrant différents parcours d'utilisation. Les retours ont été essentiels pour identifier les points de friction, notamment dans la navigation entre les questions et la compréhension des feedbacks. En réponse, j’ai ajusté la logique de navigation pour un affichage séquentiel plus fluide des questions et amélioré la clarté des feedbacks en utilisant des indicateurs visuels pour les réponses correctes et incorrectes.
+
+
+Design:
+
+Le design a été pensé pour être à la fois sobre et fonctionnel. L'accessibilité a été une priorité, avec des choix de contrastes et de tailles de texte favorisant une lecture aisée pour tous les utilisateurs. Les défis de design ont inclus l'adaptation de l'interface pour différents appareils, résolus par l'implémentation de techniques de design réactif.
+
+
+Difficultés Rencontrées:
+
+L'un des défis majeurs a été l'affichage séquentiel des questions. La solution a impliqué une combinaison de gestion d'état côté client et de requêtes asynchrones pour charger les questions sans recharger la page entière. Le feedback immédiat a nécessité l'intégration d'animations discrètes pour enrichir l'interaction sans perturber le flux de l'utilisateur. Le calcul dynamique des scores a été optimisé grâce à des algorithmes efficaces de scoring côté serveur, avec une mise à jour instantanée côté client.
+
+
+Conclusion:
+
+Ce projet de quiz en ligne sur le thème de Pâques a démontré la puissance de Go, HTML, et CSS pour créer des applications web interactives et éducatives. Les défis techniques et de design ont été surmontés grâce à une approche itérative, basée sur les feedbacks des utilisateurs et une recherche approfondie. L'expérience finale offre un mélange engageant d'apprentissage et de divertissement, soulignant l'importance de l'accessibilité et de l'interaction utilisateur dans le développement web moderne.

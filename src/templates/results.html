@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Résultats du Quiz</title>
+    <link rel="stylesheet" href="/src/static/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Titre pour indiquer la fin du quiz -->
+      <h1>Quiz terminé</h1>
+      <br /><br /><br />
+      <!-- Introduction aux résultats -->
+      <p>Votre résultat:</p>
+      <!-- Affichage du score de l'utilisateur -->
+      <p>
+        Vous avez répondu correctement à <strong>{{.Score}}</strong> questions
+        sur <strong>{{.TotalQuestions}}</strong>
+      </p>
+      <!-- Lien pour recommencer le quiz -->
+      <a href="/reset-quiz" class="button">Recommencer le quiz</a>
+    </div>
+  </body>
+</html>

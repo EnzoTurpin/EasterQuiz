@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quiz</title>
+    <link rel="stylesheet" href="/src/static/css/style.css" />
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  </head>
+  <body>
+    <!-- Pour l'animation des particules -->
+    <div id="particles-js"></div>
+    <div class="container">
+      <!-- Indicateur de difficulté du quiz -->
+      <div id="difficulty-indicator" class="difficulty-{{.Difficulty}}">
+        <strong>Difficulté: {{.Difficulty}}</strong>
+      </div>
+      <div class="question-form">
+        <!-- Affichage de la question -->
+        <p class="question-title"><strong>{{.Text}}</strong></p>
+        <!-- Formulaire des réponses -->
+        <form action="/quiz" method="post" class="form">
+          {{range $index, $ans := .Answers}}
+          <!-- Options de réponse -->
+          <div class="answer-option">
+            <input
+              type="radio"
+              id="answer{{$index}}"
+              name="answer"
+              value="{{$ans}}"
+              required
+            />
+            <label for="answer{{$index}}">{{$ans}}</label>
+          </div>
+          {{end}}
+          <input type="hidden" name="questionIndex" value="{{.Index}}" />
+          <!-- Bouton de soumission -->
+          <div class="submit-container">
+            <button type="submit" class="submit-button">Valider</button>
+          </div>
+        </form>
+        <!-- Bouton pour retourner au menu principal -->
+        <form action="/" method="get" class="form">
+          <button type="submit" class="return-button">Retour au menu</button>
+        </form>
+      </div>
+    </div>
+    <!-- Script pour adapter les particules selon la difficulté -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var difficulty = "{{.Difficulty}}";
+        var scriptPath = "/src/static/js/" + difficulty + "-particles.js";
+        var script = document.createElement("script");
+        script.src = scriptPath;
+        document.head.appendChild(script);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Choisir la difficulté</title>
+    <link rel="stylesheet" href="/src/static/css/style.css" />
+  </head>
+  <body>
+    <div class="question-form">
+      <p class="question-title">Veuillez choisir une difficulté:</p>
+      <!-- Invitation à choisir la difficulté du quiz -->
+      <form action="/quiz" method="post">
+        <!-- Boutons pour sélectionner la difficulté -->
+        <button
+          type="submit"
+          name="difficulty"
+          value="Facile"
+          class="difficulty-button easy"
+        >
+          Facile
+        </button>
+        <button
+          type="submit"
+          name="difficulty"
+          value="Moyen"
+          class="difficulty-button medium"
+        >
+          Moyen
+        </button>
+        <button
+          type="submit"
+          name="difficulty"
+          value="Difficile"
+          class="difficulty-button hard"
+        >
+          Difficile
+        </button>
+      </form>
+    </div>
+  </body>
+</html>
