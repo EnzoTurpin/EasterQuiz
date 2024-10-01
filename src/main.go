@@ -29,8 +29,8 @@ func main() {
 	setupRoutes() // Configuration des routes HTTP
 
 	// Démarrage du serveur
-	fmt.Println("Server started on :8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	fmt.Println("Server started on :8082")
+	if err := http.ListenAndServe(":8082", nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
 }
