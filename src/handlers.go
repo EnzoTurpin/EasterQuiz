@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -20,6 +21,13 @@ func setupRoutes() {
 	http.HandleFunc("/feedback", feedbackHandler)
 	http.HandleFunc("/finish", finishHandler)
 	http.HandleFunc("/reset-quiz", resetQuizHandler)
+	http.HandleFunc("/debug-questions", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("<h1>Liste des questions</h1>"))
+		for _, q := range quiz {
+			fmt.Fprintf(w, "<p>Question : %s | Difficulté : %s</p>", q.Text, q.Difficulty)
+		}
+	})
+
 }
 
 func difficultySelectionHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +36,25 @@ func difficultySelectionHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	tmpl.Execute(w, nil)
+
+	// Vérification des paramètres pour un éventuel message d'erreur
+	errorMessage := ""
+	if r.URL.Query().Get("error") != "" {
+		errorMessage = r.URL.Query().Get("error")
+	}
+
+	// Structure des données envoyées au template
+	data := struct {
+		ErrorMessage string
+	}{
+		ErrorMessage: errorMessage,
+	}
+
+	// Exécution du template avec les données
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 // Gestionnaire pour les requêtes de la page du quiz.
@@ -39,23 +65,41 @@ func quizHandler(w http.ResponseWriter, r *http.Request) {
 		difficulty := r.FormValue("difficulty")
 
 		if difficulty != "" {
+			// Filtrer les questions à partir de la variable globale allQuestions
 			filteredQuiz := filterQuestionsByDifficulty(difficulty)
+			if len(filteredQuiz) == 0 {
+				log.Printf("Aucune question disponible pour la difficulté : %s\n", difficulty)
+				http.Redirect(w, r, "/?error=Aucune+question+disponible+pour+la+difficulté+sélectionnée.+Veuillez+choisir+une+autre+difficulté.", http.StatusSeeOther)
+				return
+			}
+
+			// Sélectionner des questions aléatoires parmi les questions filtrées
 			selectedQuestions := selectRandomQuestions(filteredQuiz, 5)
 
+			log.Printf("Difficulté sélectionnée : %s, Questions disponibles : %d\n", difficulty, len(filteredQuiz))
+
+			if len(selectedQuestions) == 0 {
+				http.Redirect(w, r, "/?error=Aucune+question+disponible+pour+la+difficulté+sélectionnée.+Veuillez+choisir+une+autre+difficulté.", http.StatusSeeOther)
+				return
+			}
+
+			// Mettre à jour les variables globales pour le quiz actuel
 			currentDifficulty = difficulty
 			quiz = selectedQuestions
 			currentQuestionIndex = 0
 
+			// Rediriger vers la première question du quiz
 			http.Redirect(w, r, "/quiz", http.StatusSeeOther)
 			return
 		} else {
+			// Traiter la réponse de l'utilisateur pour la question actuelle
 			processUserAnswer(w, r)
-
 		}
 	} else if r.Method == "GET" {
 		if currentQuestionIndex < len(quiz) {
 			question := quiz[currentQuestionIndex]
 
+			// Préparer les données pour le template de question
 			data := struct {
 				Text       string
 				Answers    []string
@@ -68,6 +112,7 @@ func quizHandler(w http.ResponseWriter, r *http.Request) {
 				Difficulty: currentDifficulty,
 			}
 
+			// Charger et exécuter le template de question
 			tmpl, err := template.ParseFiles("src/templates/question_form.html")
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -78,9 +123,11 @@ func quizHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 		} else {
+			// Rediriger vers la page de fin si toutes les questions ont été posées
 			http.Redirect(w, r, "/finish", http.StatusSeeOther)
 		}
 	} else {
+		// Gérer les méthodes HTTP non autorisées
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 }

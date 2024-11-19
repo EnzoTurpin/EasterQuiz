@@ -9,10 +9,16 @@
     <h1>Easter Quiz</h1>
 
     <div class="question-form">
+      {{if .ErrorMessage}}
+      <!-- Message d'erreur -->
+      <p class="error-message" style="color: red; font-weight: bold">
+        {{.ErrorMessage}}
+      </p>
+      {{end}}
+
+      <!-- Formulaire de sélection de difficulté -->
       <p class="question-title">Veuillez choisir une difficulté:</p>
-      <!-- Invitation à choisir la difficulté du quiz -->
       <form action="/quiz" method="post">
-        <!-- Boutons pour sélectionner la difficulté -->
         <button
           type="submit"
           name="difficulty"

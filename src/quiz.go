@@ -45,15 +45,22 @@ func generateQuestions(filename string, shuffle bool) ([]Question, error) {
 		line := scanner.Text()
 		parts := strings.Split(line, ",")
 		if len(parts) < 7 {
-			continue // Ignore les lignes mal formatées.
+			log.Printf("Ligne ignorée (format incorrect) : %s\n", line)
+			continue
 		}
-		// Construction et ajout d'une nouvelle question à tempQuiz.
+
+		difficulty := strings.TrimSpace(parts[6])
+		if strings.ToLower(difficulty) == "moyen" || strings.ToLower(difficulty) == " moyen " {
+			difficulty = "moyen"
+		}
+
 		tempQuiz = append(tempQuiz, Question{
-			Text:       parts[0],
-			Answers:    parts[1:5],
-			CorrectAns: parts[5],
-			Difficulty: parts[6],
+			Text:       strings.TrimSpace(parts[0]),
+			Answers:    []string{strings.TrimSpace(parts[1]), strings.TrimSpace(parts[2]), strings.TrimSpace(parts[3]), strings.TrimSpace(parts[4])},
+			CorrectAns: strings.TrimSpace(parts[5]),
+			Difficulty: difficulty,
 		})
+
 	}
 
 	if shuffle {
@@ -72,8 +79,10 @@ func generateQuestions(filename string, shuffle bool) ([]Question, error) {
 func selectRandomQuestions(questions []Question, n int) []Question {
 	rand.Shuffle(len(questions), func(i, j int) { questions[i], questions[j] = questions[j], questions[i] })
 	if len(questions) > n {
+		log.Printf("Sélection aléatoire de %d questions parmi %d disponibles.\n", n, len(questions))
 		return questions[:n]
 	}
+	log.Printf("Retour de toutes les questions disponibles : %d\n", len(questions))
 	return questions
 }
 
@@ -114,16 +123,22 @@ func setMIMEType(next http.Handler) http.Handler {
 // filterQuestionsByDifficulty filtre les questions par difficulté.
 func filterQuestionsByDifficulty(difficulty string) []Question {
 	filtered := []Question{}
-	for _, q := range quiz {
+	uniqueDifficulties := map[string]bool{}
+
+	for _, q := range allQuestions { // Utiliser allQuestions
+		uniqueDifficulties[q.Difficulty] = true
 		if q.Difficulty == difficulty {
 			filtered = append(filtered, q)
 		}
 	}
+
+	log.Printf("Niveaux trouvés : %v\n", uniqueDifficulties)
+	log.Printf("Questions filtrées pour '%s': %v\n", difficulty, filtered)
 	return filtered
 }
 
 // Affiche un formulaire de sélection de difficulté.
-func renderDifficultySelection(w http.ResponseWriter, r *http.Request) {
+func renderDifficultySelection(w http.ResponseWriter, _ *http.Request) {
 	tmpl, err := template.ParseFiles("src/templates/difficulty_selection.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -257,7 +272,7 @@ func processUserAnswer(w http.ResponseWriter, r *http.Request) {
 }
 
 // Met à jour le cookie de session pour la prochaine question.
-func updateSessionCookie(w http.ResponseWriter, r *http.Request, nextQuestionIndex int) {
+func updateSessionCookie(w http.ResponseWriter, _ *http.Request, nextQuestionIndex int) {
 	http.SetCookie(w, &http.Cookie{
 		Name:  "quiz-session",
 		Value: strconv.Itoa(nextQuestionIndex),
@@ -266,7 +281,7 @@ func updateSessionCookie(w http.ResponseWriter, r *http.Request, nextQuestionInd
 }
 
 // Retourne un identifiant utilisateur par défaut; pourrait être amélioré pour gérer plusieurs utilisateurs.
-func getSessionUserID(r *http.Request) string {
+func getSessionUserID(_ *http.Request) string {
 	return "defaultUser"
 }
 

@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	allQuestions         []Question
 	quiz                 []Question
 	scores               map[string]int = make(map[string]int)
 	currentQuestionIndex int
@@ -22,6 +23,11 @@ func main() {
 	// Génération des questions
 	var err error
 	quiz, err = generateQuestions("questions.csv", true)
+	if err != nil {
+		log.Fatalf("Failed to load questions: %s", err)
+	}
+
+	allQuestions, err = generateQuestions("questions.csv", true)
 	if err != nil {
 		log.Fatalf("Failed to load questions: %s", err)
 	}
